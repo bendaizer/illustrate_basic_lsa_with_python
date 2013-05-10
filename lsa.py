@@ -10,7 +10,7 @@ def build_M(docs):
     terms = list(set([item for s in docs for item in s.split(" ")]))
     terms.sort()
 
-    print "term vector is :\n", terms
+    print "term vector is :\n", terms, "\n"
 
     n_terms = len(terms)
     M = np.zeros((n_terms, n_docs))
@@ -31,9 +31,8 @@ def tfidf(M):
     for doc in range(n_docs):
         for term in range(n_terms):
             tf = M[term, doc]/M[:, doc].sum()
-            idf = log(n_docs/M[term, :].sum())
+            idf = log(n_docs/M[term, :].sum(), 2)
             Mtfidf[term, doc] = tf*idf
-
     return Mtfidf
 
 
@@ -44,14 +43,19 @@ def main():
         "joue souris clavier",
         "clavier permet écrire ordinateur"
     ]
-    M = build_M(docs)
-    print M
 
-    MM = tfidf(M)
-    print MM
-
+    MM = tfidf(build_M(docs))
     U, s, V = np.linalg.svd(MM)
-    print U, s, V
+    S = np.zeros(MM.shape)
+
+    # S[:s.size, :s.size] = np.diag(s)
+    # if np.allclose(MM, np.dot(U, np.dot(S, V))):
+    #     print "SVD OK"
+
+    S[:s.size, :s.size] = np.diag([k if i < 2 else 0 for (i, k) in enumerate(s)])
+
+    print np.dot(U, np.dot(S, V))
+    print MM
 
 if __name__ == '__main__':
     main()

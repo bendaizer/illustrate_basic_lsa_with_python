@@ -36,6 +36,29 @@ def tfidf(M):
     return Mtfidf
 
 
+def multiply(*args):
+    """takes numpy arrays and multiplies them"""
+    i = 0
+    res = 1
+    while i < len(args):
+        M = args[i]
+        i += 1
+        res = np.dot(res, M)
+    return res
+
+
+# def test_multiply():
+#     a = np.array([[1, 0], [0, 1]])
+#     b = np.array([[0, 2], [2, 0]])
+#     c = np.array([[0, 1], [1, 0]])
+#     d = np.array([[3, 0], [0, 3]])
+#     result = np.dot(np.dot(np.dot(a, b), c), d)
+#     test = multiply(a, b, c, d)
+#     # print "test = ", test
+#     # print "result = ", result
+#     print np.allclose(test, result)
+
+
 def main():
     docs = [
         "chat poursuit souris",
@@ -58,4 +81,5 @@ def main():
     print MM
 
 if __name__ == '__main__':
-    main()
+    # main()
+    test_multiply()

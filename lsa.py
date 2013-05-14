@@ -2,7 +2,7 @@
 
 import numpy as np
 from math import *
-
+import matplotlib.pyplot as plt
 
 def multiply(*args):
     """takes custom number of numpy arrays and multiplies them"""
@@ -28,6 +28,7 @@ def build_terms(docs, stopwords):
     terms = dict((key, value) for (value, key) in enumerate(terms))
     return terms
 
+
 def build_M(terms, docs):
     """take a list of string docs, and a dict for terms
        extracts vector of words and build term-doc matrix"""
@@ -39,7 +40,7 @@ def build_M(terms, docs):
 
     for i, doc in enumerate(docs_split):
         for term in doc:
-            if term in terms : M[terms.get(term), i] += 1
+            if term in terms: M[terms.get(term), i] += 1
     return M
 
 
@@ -57,9 +58,20 @@ def tfidf(M):
     return Mtfidf
 
 
+def scatter(U, V, labels):
+    plt.scatter(U, V)
+    for label, x, y in zip(labels, U, V):
+        plt.annotate(
+            label,
+            xy=(x, y),
+            textcoords="offset points", ha="right", va="bottom")
+    plt.show
 
 
 # def main():
+
+# densier numpy array printing
+np.set_printoptions(precision=3)
 
 documents = [
     "Human machine interface for lab abc computer applications",
@@ -78,39 +90,39 @@ stopwords = set(['for', 'a', 'of', 'the', 'and', 'to', 'in'])
 # terms = build_terms(documents, stopwords)
 
 # using custom terms
-terms =  ["human",
-        "interface",
-        "computer",
-        "user",
-        "system",
-        "response",
-        "time",
-        "EPS",
-        "survey",
-        "trees",
-        "graph",
-        "minors"]
+terms_label = ["human",
+         "interface",
+         "computer",
+         "user",
+         "system",
+         "response",
+         "time",
+         "EPS",
+         "survey",
+         "trees",
+         "graph",
+         "minors"]
 
-terms = dict((key,value) for (value,key) in enumerate(terms))
+terms = dict((key.lower(), value) for (value, key) in enumerate(terms_label))
 
 
 M = build_M(terms, documents)
-print M
 # MM = tfidf(M)
 
-# U, s, V = np.linalg.svd(M)
-# S = np.zeros(MM.shape)
+U, s, V = np.linalg.svd(M)
+S = np.zeros(M.shape)
 
 # S[:s.size, :s.size] = np.diag(s)
-# if np.allclose(MM, np.dot(U, np.dot(S, V))):
+S[:s.size, :s.size] = np.diag([k if i < 3 else 0 for (i, k) in enumerate(s)])
+
+scatter(U[:, 1], U[:, 2], terms_label)
+
+# if np.allclose(M, np.dot(U, np.dot(S, V))):
 #     print "SVD OK"
 
-# S[:s.size, :s.size] = np.diag([k if i < 2 else 0 for (i, k) in enumerate(s)])
-
 # print np.dot(U, np.dot(S, V))
-# print MM
 
-#print topics
+# print ""
 # print "topic 1"
 # print [(i, j) for (i, j) in zip(np.dot(U, S)[:, 0], terms) if abs(i)>0.01]  # if abs(i) > 0.1]
 # print ""

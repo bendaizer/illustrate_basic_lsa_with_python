@@ -5,7 +5,7 @@ from math import *
 
 
 def multiply(*args):
-    """takes numpy arrays and multiplies them"""
+    """takes custom number of numpy arrays and multiplies them"""
     i = 0
     res = 1
     while i < len(args):
@@ -20,6 +20,14 @@ def cosine(x, y):
     return np.dot(x, y)/sqrt(np.dot(x, x))/sqrt(np.dot(y, y))
 
 
+def build_terms(docs, stopwords):
+    """build dictionary of words from docs, ignoring list of stopwords """
+    terms = list(set([item.lower() for s in docs for item in s.split(" ")
+                  if item.lower() not in stopwords]))
+    terms.sort()
+    terms = dict((key, value) for (value, key) in enumerate(terms))
+    return terms
+
 def build_M(terms, docs):
     """take a list of string docs, and a dict for terms
        extracts vector of words and build term-doc matrix"""
@@ -30,14 +38,10 @@ def build_M(terms, docs):
     M = np.zeros((n_terms, n_docs))
 
     for i, doc in enumerate(docs_split):
-        print doc
         for term in doc:
-            print i, term, terms.get(term)
             if term in terms : M[terms.get(term), i] += 1
-            # print M[terms.get(term), i]
-
-    # print M
     return M
+
 
 def tfidf(M):
     """take matrix term-doc with frequencies and normalize with tf-idf instead"""
@@ -70,10 +74,10 @@ documents = [
 ]
 
 stopwords = set(['for', 'a', 'of', 'the', 'and', 'to', 'in'])
-terms = list(set([item.lower() for s in documents for item in s.split(" ") if item.lower() not in stopwords]))
-terms.sort()
-terms = dict((key,value) for (value,key) in enumerate(terms))
 
+# terms = build_terms(documents, stopwords)
+
+# using custom terms
 terms =  ["human",
         "interface",
         "computer",
@@ -91,8 +95,10 @@ terms = dict((key,value) for (value,key) in enumerate(terms))
 
 
 M = build_M(terms, documents)
-# MM = tfidf(build_M(docs))
-# U, s, V = np.linalg.svd(MM)
+print M
+# MM = tfidf(M)
+
+# U, s, V = np.linalg.svd(M)
 # S = np.zeros(MM.shape)
 
 # S[:s.size, :s.size] = np.diag(s)

@@ -4,23 +4,40 @@ import numpy as np
 from math import *
 
 
-def build_M(docs):
-    """take a list of string docs, extracts vector of words and build term-doc matrix"""
+def multiply(*args):
+    """takes numpy arrays and multiplies them"""
+    i = 0
+    res = 1
+    while i < len(args):
+        M = args[i]
+        i += 1
+        res = np.dot(res, M)
+    return res
+
+
+def cosine(x, y):
+    """returns cosine of angle between x et y"""
+    return np.dot(x, y)/sqrt(np.dot(x, x))/sqrt(np.dot(y, y))
+
+
+def build_M(terms, docs):
+    """take a list of string docs, and a dict for terms
+       extracts vector of words and build term-doc matrix"""
+    docs_split = [doc_list.lower().split(" ") for doc_list in docs]
     n_docs = len(docs)
-    terms = list(set([item for s in docs for item in s.split(" ")]))
-    terms.sort()
-
-    print "term vector is :\n", terms, "\n"
-
     n_terms = len(terms)
+
     M = np.zeros((n_terms, n_docs))
 
-    for i, k in enumerate(terms):
-        for j, d in enumerate(docs):
-            M[i][j] = 1 if k in d else 0
+    for i, doc in enumerate(docs_split):
+        print doc
+        for term in doc:
+            print i, term, terms.get(term)
+            if term in terms : M[terms.get(term), i] += 1
+            # print M[terms.get(term), i]
 
+    # print M
     return M
-
 
 def tfidf(M):
     """take matrix term-doc with frequencies and normalize with tf-idf instead"""
@@ -36,50 +53,64 @@ def tfidf(M):
     return Mtfidf
 
 
-def multiply(*args):
-    """takes numpy arrays and multiplies them"""
-    i = 0
-    res = 1
-    while i < len(args):
-        M = args[i]
-        i += 1
-        res = np.dot(res, M)
-    return res
 
 
-# def test_multiply():
-#     a = np.array([[1, 0], [0, 1]])
-#     b = np.array([[0, 2], [2, 0]])
-#     c = np.array([[0, 1], [1, 0]])
-#     d = np.array([[3, 0], [0, 3]])
-#     result = np.dot(np.dot(np.dot(a, b), c), d)
-#     test = multiply(a, b, c, d)
-#     # print "test = ", test
-#     # print "result = ", result
-#     print np.allclose(test, result)
+# def main():
+
+documents = [
+    "Human machine interface for lab abc computer applications",
+    "A survey of user opinion of computer system response time",
+    "The EPS user interface management system",
+    "System and human system engineering testing of EPS",
+    "Relation of user perceived response time to error measurement",
+    "The generation of random binary unordered trees",
+    "The intersection graph of paths in trees",
+    "Graph minors IV Widths of trees and well quasi ordering",
+    "Graph minors A survey"
+]
+
+stopwords = set(['for', 'a', 'of', 'the', 'and', 'to', 'in'])
+terms = list(set([item.lower() for s in documents for item in s.split(" ") if item.lower() not in stopwords]))
+terms.sort()
+terms = dict((key,value) for (value,key) in enumerate(terms))
+
+terms =  ["human",
+        "interface",
+        "computer",
+        "user",
+        "system",
+        "response",
+        "time",
+        "EPS",
+        "survey",
+        "trees",
+        "graph",
+        "minors"]
+
+terms = dict((key,value) for (value,key) in enumerate(terms))
 
 
-def main():
-    docs = [
-        "chat poursuit souris",
-        "chat souris sont animaux",
-        "joue souris clavier",
-        "clavier permet écrire ordinateur"
-    ]
+M = build_M(terms, documents)
+# MM = tfidf(build_M(docs))
+# U, s, V = np.linalg.svd(MM)
+# S = np.zeros(MM.shape)
 
-    MM = tfidf(build_M(docs))
-    U, s, V = np.linalg.svd(MM)
-    S = np.zeros(MM.shape)
+# S[:s.size, :s.size] = np.diag(s)
+# if np.allclose(MM, np.dot(U, np.dot(S, V))):
+#     print "SVD OK"
 
-    # S[:s.size, :s.size] = np.diag(s)
-    # if np.allclose(MM, np.dot(U, np.dot(S, V))):
-    #     print "SVD OK"
+# S[:s.size, :s.size] = np.diag([k if i < 2 else 0 for (i, k) in enumerate(s)])
 
-    S[:s.size, :s.size] = np.diag([k if i < 2 else 0 for (i, k) in enumerate(s)])
+# print np.dot(U, np.dot(S, V))
+# print MM
 
-    print np.dot(U, np.dot(S, V))
-    print MM
+#print topics
+# print "topic 1"
+# print [(i, j) for (i, j) in zip(np.dot(U, S)[:, 0], terms) if abs(i)>0.01]  # if abs(i) > 0.1]
+# print ""
+# print "topic 2"
+# print [(i, j) for (i, j) in zip(np.dot(U, S)[:, 1], terms) if abs(i)>0.01]  #if abs(i) > 0.1]
 
-if __name__ == '__main__':
-    # main()
-    test_multiply()
+
+# if __name__ == '__main__':
+#     main()

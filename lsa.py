@@ -134,9 +134,15 @@ documents = [
     "clavier ordinateur"
 ]
 docs_label = ["A1", "A2", "B1", "B2"]  # chat souris etc
+<<<<<<< HEAD
 
 terms_label = build_terms(documents, stopwords)
 
+=======
+
+terms_label = build_terms(documents, stopwords)
+
+>>>>>>> ce896f7cf4d9fb29355ce68e174b897d8b010a80
 # ==========
 # using custom terms
 # terms_label = ["human",
@@ -203,3 +209,8 @@ plt.show()
 # =======
 # if __name__ == '__main__':
 #     main()
+
+
+
+A = np.array([[0,1,0,0,1],[0,1,0,0,1],[3,2,2,0,1],[0,0,1,1,0],[0,0,1,1,1],[0,0,0,0,0]])
+A = A.astype(float)

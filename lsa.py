@@ -96,13 +96,7 @@ def tf(M):
 
 def scatter(U, V, labels):
     plt.scatter(U, V)
-    for label, x, y in zip(labels, U, V):
-        plt.annotate(
-            label,
-            xy=(x, y), xytext=(0.9, 9),
-            textcoords="offset points", ha="right", va="bottom")
-
-
+    [plt.annotate(label, xy=(x, y), xytext=(0.9, 9), textcoords="offset points", ha="right", va="bottom") for label, x, y in zip(labels, U, V)] 
 
 
 # def main():
@@ -134,15 +128,9 @@ documents = [
     "clavier ordinateur"
 ]
 docs_label = ["A1", "A2", "B1", "B2"]  # chat souris etc
-<<<<<<< HEAD
 
 terms_label = build_terms(documents, stopwords)
 
-=======
-
-terms_label = build_terms(documents, stopwords)
-
->>>>>>> ce896f7cf4d9fb29355ce68e174b897d8b010a80
 # ==========
 # using custom terms
 # terms_label = ["human",
@@ -186,8 +174,8 @@ S = np.zeros(M.shape)
 S[:s.size, :s.size] = np.diag([k if i < 3 else 0 for (i, k) in enumerate(s)])
 
 
-# scatter(U[:, 0], U[:, 1], terms_label)
-# scatter(V[:, 1], V[:, 2], docs_label)
+scatter(U[:, 0], U[:, 1], terms_label)
+#scatter(V[:, 1], V[:, 2], docs_label)
 
 # # fig = plt.figure()
 # # ax = fig.add_subplot(111, projection='3d')
